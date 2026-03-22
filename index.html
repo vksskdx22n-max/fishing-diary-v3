@@ -86,6 +86,62 @@ select{width:100%;padding:9px 30px 9px 10px;border:1px solid var(--border);borde
 </style>
 </head>
 <body>
+
+<!-- SCHERMATA PASSWORD -->
+<div id="pwd-screen" style="
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(160deg,#0a1a30 0%,#1a3a5c 60%,#0e2840 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:30px;
+">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:#fff;letter-spacing:6px;text-align:center;line-height:1;">FISHING<br>DIARY</div>
+  <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,#e07b39,transparent);"></div>
+  <div style="font-family:Georgia,serif;font-style:italic;font-size:15px;color:rgba(255,255,255,0.6);text-align:center;">Laguna di Venezia</div>
+  <div style="font-family:Georgia,serif;font-size:13px;color:rgba(255,255,255,0.5);text-align:center;margin-top:8px;">Inserisci la password per accedere</div>
+  <input id="pwd-input" type="password" placeholder="Password"
+    style="
+      width:100%;max-width:280px;padding:14px 18px;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.2);
+      border-radius:12px;color:#fff;font-size:16px;
+      text-align:center;outline:none;
+      -webkit-appearance:none;
+    "
+    onkeydown="if(event.key==='Enter')checkPwd()"
+  />
+  <div id="pwd-error" style="color:#e07b39;font-size:13px;min-height:18px;"></div>
+  <button onclick="checkPwd()" style="
+    background:#e07b39;border:none;border-radius:12px;
+    padding:14px 40px;color:#fff;font-size:16px;
+    font-family:Georgia,serif;cursor:pointer;
+    width:100%;max-width:280px;
+  ">Entra 🎣</button>
+  <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:10px;">
+    La password è disponibile nel post Facebook
+  </div>
+</div>
+
+<script>
+function checkPwd() {
+  const val = document.getElementById('pwd-input').value.trim();
+  if (val === 'laguna2026') {
+    document.getElementById('pwd-screen').style.display = 'none';
+    localStorage.setItem('fd_pwd_ok', '1');
+  } else {
+    document.getElementById('pwd-error').textContent = 'Password errata — riprova';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+// Se già autenticato in precedenza, salta la schermata
+if (localStorage.getItem('fd_pwd_ok') === '1') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const s = document.getElementById('pwd-screen');
+    if (s) s.style.display = 'none';
+  });
+}
+</script>
+
 <div class="app">
 
 <div class="header">
