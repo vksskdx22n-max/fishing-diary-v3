@@ -94,10 +94,10 @@ select{width:100%;padding:9px 30px 9px 10px;border:1px solid var(--border);borde
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:20px;padding:30px;
 ">
-  <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:#fff;letter-spacing:6px;text-align:center;line-height:1;">FISHING<br>DIARY</div>
+  <div style="font-family:Georgia,serif;font-size:48px;color:#fff;letter-spacing:6px;text-align:center;line-height:1.1;font-weight:700;">FISHING<br>DIARY</div>
   <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,#e07b39,transparent);"></div>
   <div style="font-family:Georgia,serif;font-style:italic;font-size:15px;color:rgba(255,255,255,0.6);text-align:center;">Laguna di Venezia</div>
-  <div style="font-family:Georgia,serif;font-size:13px;color:rgba(255,255,255,0.5);text-align:center;margin-top:8px;">Inserisci la password per accedere</div>
+  <div style="font-family:Georgia,serif;font-size:13px;color:rgba(255,255,255,0.5);text-align:center;margin-top:4px;">Inserisci la password per accedere</div>
   <input id="pwd-input" type="password" placeholder="Password"
     style="
       width:100%;max-width:280px;padding:14px 18px;
@@ -109,36 +109,34 @@ select{width:100%;padding:9px 30px 9px 10px;border:1px solid var(--border);borde
     "
     onkeydown="if(event.key==='Enter')checkPwd()"
   />
-  <div id="pwd-error" style="color:#e07b39;font-size:13px;min-height:18px;"></div>
+  <div id="pwd-error" style="color:#e07b39;font-size:13px;min-height:18px;text-align:center;"></div>
   <button onclick="checkPwd()" style="
     background:#e07b39;border:none;border-radius:12px;
-    padding:14px 40px;color:#fff;font-size:16px;
+    padding:14px 0;color:#fff;font-size:16px;
     font-family:Georgia,serif;cursor:pointer;
     width:100%;max-width:280px;
+    touch-action:manipulation;
   ">Entra 🎣</button>
-  <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:10px;">
+  <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:6px;">
     La password è disponibile nel post Facebook
   </div>
 </div>
 
 <script>
-function checkPwd() {
-  const val = document.getElementById('pwd-input').value.trim();
-  if (val === 'laguna2026') {
-    document.getElementById('pwd-screen').style.display = 'none';
-    localStorage.setItem('fd_pwd_ok', '1');
+var _PWD='laguna2026';
+function checkPwd(){
+  var val=document.getElementById('pwd-input').value.trim();
+  if(val===_PWD){
+    localStorage.setItem('fd_pwd_ok','1');
+    document.getElementById('pwd-screen').style.display='none';
   } else {
-    document.getElementById('pwd-error').textContent = 'Password errata — riprova';
-    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-error').textContent='Password errata — riprova';
+    document.getElementById('pwd-input').value='';
     document.getElementById('pwd-input').focus();
   }
 }
-// Se già autenticato in precedenza, salta la schermata
-if (localStorage.getItem('fd_pwd_ok') === '1') {
-  document.addEventListener('DOMContentLoaded', () => {
-    const s = document.getElementById('pwd-screen');
-    if (s) s.style.display = 'none';
-  });
+if(localStorage.getItem('fd_pwd_ok')==='1'){
+  document.getElementById('pwd-screen').style.display='none';
 }
 </script>
 
@@ -199,7 +197,7 @@ if (localStorage.getItem('fd_pwd_ok') === '1') {
     <div>
       <div class="header-title">🎣 Fishing Diary</div>
       <div style="font-size:16px;font-weight:600;color:#fff;opacity:.9;margin-top:4px;text-shadow:0 1px 3px rgba(0,0,0,.4);padding-left:1.6em">Laguna di Venezia</div>
-      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 1.3 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
+      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 1.4 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
       <div class="header-info" style="margin-top:8px">I dati vengono salvati nel browser. <b>Esporta</b> regolarmente in JSON/CSV per non perderli.</div>
     </div>
     <div class="header-pescatore">
@@ -300,9 +298,9 @@ if (localStorage.getItem('fd_pwd_ok') === '1') {
     <p style="font-size:14px;line-height:1.7;color:var(--text);margin-top:8px"><b>Riepilogo generale:</b> numero totale di uscite, catture complessive e peso totale stimato.</p>
     <p style="font-size:14px;line-height:1.7;color:var(--text);margin-top:8px"><b>Grafici:</b> catture per mese e catture per zona, utili per individuare i periodi e le aree più produttivi.</p>
     <p style="font-size:14px;line-height:1.7;color:var(--text);margin-top:8px"><b>Correlazioni:</b> media di catture per condizione meteo (cielo, marea, fase lunare) — ti aiutano a capire in quali condizioni peschi meglio.</p>
-    <p style="font-size:14px;line-height:1.7;color:var(--text);margin-top:8px"><b>Tasso di successo per spot:</b> per ogni spot con almeno 2 uscite registrate, mostra la percentuale di uscite andate a segno. Utile per confrontare la produttività dei diversi punti di pesca.</p>
+    <p style="font-size:14px;line-height:1.7;color:var(--text);margin-top:8px"><b>Tasso di successo per spot:</b> per ogni spot, mostra la percentuale di uscite andate a segno. Questa sezione compare solo se hai almeno 2 uscite registrate <b>nello stesso spot</b> — solo allora è possibile calcolare una percentuale significativa. Utile per confrontare la produttività dei diversi punti di pesca.</p>
     <p style="font-size:14px;line-height:1.7;color:var(--text);margin-top:8px"><b>Miglior fascia oraria:</b> media di catture per fascia oraria (mattino, tarda mattina, pomeriggio, sera, notte) — visibile solo se hai registrato l'orario nelle uscite.</p>
-    <p style="font-size:14px;line-height:1.7;color:var(--text);margin-top:8px"><b>Combinazioni esca + zona più produttive:</b> le 5 combinazioni esca/zona con la media catture più alta, su almeno 2 uscite. Ti suggerisce cosa usare e dove.</p>
+    <p style="font-size:14px;line-height:1.7;color:var(--text);margin-top:8px"><b>Combinazioni esca + zona più produttive:</b> le 5 combinazioni esca/zona con la media catture più alta. Questa sezione compare solo se hai almeno 2 uscite in cui hai usato la <b>stessa esca nella stessa zona</b> — solo allora è possibile calcolare una media significativa. Ti suggerisce cosa usare e dove.</p>
     <p style="font-size:14px;line-height:1.7;color:var(--text);margin-top:10px">⚠️ Le statistiche si aggiornano in tempo reale ad ogni nuova uscita salvata. Con poche uscite i dati sono orientativi — più uscite registri, più le analisi diventano significative.</p>
   </div>
   <div class="card">
