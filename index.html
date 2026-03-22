@@ -614,7 +614,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
 
 <!-- MAPPA -->
 <div id="panel-mappa" class="panel">
-  <div class="card" style="padding:0;overflow:hidden"><div id="map"></div></div>
+  <div class="card" style="padding:0"><div id="map"></div></div>
   <div class="card">
     <div class="section-title">I tuoi spot salvati</div>
     <div id="spot-list-mappa"><div class="empty">Apri la mappa per vedere gli spot.</div></div>
@@ -931,7 +931,7 @@ function fmtData(d){if(!d)return '';var p=d.split('-');return p[2]+'/'+p[1]+'/'+
 function initMap(){
   if(mapInstance){mapInstance.invalidateSize();renderSpotMappa();return;}
   mapInstance=L.map('map').setView([45.4408,12.3155],12);
-  L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:20}).addTo(mapInstance);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19,referrerPolicy:'no-referrer'}).addTo(mapInstance);
   renderSpotMappa();
   mapInstance.on('click',function(e){
     if(newSpotMarker)mapInstance.removeLayer(newSpotMarker);
