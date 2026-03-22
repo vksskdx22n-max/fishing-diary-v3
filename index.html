@@ -931,7 +931,8 @@ function fmtData(d){if(!d)return '';var p=d.split('-');return p[2]+'/'+p[1]+'/'+
 function initMap(){
   if(mapInstance){mapInstance.invalidateSize();renderSpotMappa();return;}
   mapInstance=L.map('map').setView([45.4408,12.3155],12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19,referrerPolicy:'no-referrer'}).addTo(mapInstance);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'© Esri © OpenStreetMap',maxZoom:19}).addTo(mapInstance);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'',maxZoom:19,opacity:0.45}).addTo(mapInstance);
   renderSpotMappa();
   mapInstance.on('click',function(e){
     if(newSpotMarker)mapInstance.removeLayer(newSpotMarker);
