@@ -614,6 +614,14 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
 
 <!-- MAPPA -->
 <div id="panel-mappa" class="panel">
+  <div class="card" style="padding:10px 12px 8px">
+    <div class="section-title" style="margin-bottom:8px">🗺 Layer laguna</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div id="tog-canali" onclick="toggleWMS('canali')" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;background:#fafcff;color:var(--muted);touch-action:manipulation;user-select:none">🔵 Canali</div>
+      <div id="tog-batimetria" onclick="toggleWMS('batimetria')" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;background:#fafcff;color:var(--muted);touch-action:manipulation;user-select:none">📊 Batimetria</div>
+      <div id="tog-tegnue" onclick="toggleWMS('tegnue')" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;background:#fafcff;color:var(--muted);touch-action:manipulation;user-select:none">🪨 Tegnue</div>
+    </div>
+  </div>
   <div class="card" style="padding:0"><div id="map"></div></div>
   <div class="card">
     <div class="section-title">I tuoi spot salvati</div>
@@ -631,6 +639,33 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
 <script>
 var uscite=[],spots=[],cattureCorrenti=[],ventoDirCorr='',mareaCorr='',lunaCorr='',votoCorr=3;
 var mapInstance=null,spotMarkers=[],newSpotMarker=null;
+var wmsLayers={canali:null,batimetria:null,tegnue:null};
+var wmsActive={canali:false,batimetria:false,tegnue:false};
+var WMS_URL='https://cigno.atlantedellalaguna.it/geoserver/wms';
+var wmsConfig={
+  canali:{layers:'atlante2006:CanaliUso',opacity:0.7},
+  batimetria:{layers:'atlante2006:ProfonditaLaguna2000',opacity:0.6},
+  tegnue:{layers:'tegnue:tegnue_localizzazione',opacity:0.85}
+};
+function toggleWMS(key){
+  if(!mapInstance)return;
+  var tog=document.getElementById('tog-'+key);
+  if(wmsActive[key]){
+    if(wmsLayers[key]){mapInstance.removeLayer(wmsLayers[key]);wmsLayers[key]=null;}
+    wmsActive[key]=false;
+    tog.style.background='#fafcff';tog.style.color='';tog.style.borderColor='';
+  } else {
+    wmsLayers[key]=L.tileLayer.wms(WMS_URL,{
+      layers:wmsConfig[key].layers,
+      format:'image/png',
+      transparent:true,
+      opacity:wmsConfig[key].opacity,
+      attribution:'© Atlante della Laguna - Comune di Venezia / CNR-ISMAR'
+    }).addTo(mapInstance);
+    wmsActive[key]=true;
+    tog.style.background='var(--blu2)';tog.style.color='#fff';tog.style.borderColor='var(--blu2)';
+  }
+}
 
 function showPanel(id,el){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
