@@ -643,7 +643,7 @@ var wmsActive={canali:false,batimetria:false};
 var WMS_URL='https://cigno.atlantedellalaguna.it/geoserver/wms';
 var wmsConfig={
   canali:{layers:'base:canali_lagunari,base:toponimi_canali',opacity:1.0},
-  batimetria:{layers:'atlante2006:ProfonditaLaguna2000,geonode:punti_quotati_laguna_mav_1999_2011',opacity:0.9}
+  batimetria:{layers:'atlante2006:ProfonditaLaguna2000',opacity:0.9}
 };
 function toggleWMS(key){
   if(!mapInstance)return;
@@ -658,7 +658,10 @@ function toggleWMS(key){
       format:'image/png',
       transparent:true,
       opacity:wmsConfig[key].opacity,
-      attribution:'© Atlante della Laguna - Comune di Venezia / CNR-ISMAR'
+      attribution:'© Atlante della Laguna - Comune di Venezia / CNR-ISMAR',
+      tileSize:512,
+      width:512,
+      height:512
     }).addTo(mapInstance);
     wmsActive[key]=true;
     tog.style.background='var(--blu2)';tog.style.color='#fff';tog.style.borderColor='var(--blu2)';
