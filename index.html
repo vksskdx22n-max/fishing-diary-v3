@@ -619,7 +619,6 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <div id="tog-canali" onclick="toggleWMS('canali')" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;background:#fafcff;color:var(--muted);touch-action:manipulation;user-select:none">🔵 Canali</div>
       <div id="tog-batimetria" onclick="toggleWMS('batimetria')" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;background:#fafcff;color:var(--muted);touch-action:manipulation;user-select:none">📊 Batimetria</div>
-      <div id="tog-tegnue" onclick="toggleWMS('tegnue')" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;background:#fafcff;color:var(--muted);touch-action:manipulation;user-select:none">🪨 Tegnue</div>
     </div>
   </div>
   <div class="card" style="padding:0"><div id="map"></div></div>
@@ -639,13 +638,12 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
 <script>
 var uscite=[],spots=[],cattureCorrenti=[],ventoDirCorr='',mareaCorr='',lunaCorr='',votoCorr=3;
 var mapInstance=null,spotMarkers=[],newSpotMarker=null;
-var wmsLayers={canali:null,batimetria:null,tegnue:null};
-var wmsActive={canali:false,batimetria:false,tegnue:false};
+var wmsLayers={canali:null,batimetria:null};
+var wmsActive={canali:false,batimetria:false};
 var WMS_URL='https://cigno.atlantedellalaguna.it/geoserver/wms';
 var wmsConfig={
-  canali:{layers:'atlante2006:CanaliUso,base:toponimi_canali',opacity:0.7},
-  batimetria:{layers:'atlante2006:ProfonditaLaguna2000',opacity:0.6},
-  tegnue:{layers:'tegnue:tegnue_localizzazione',opacity:0.85}
+  canali:{layers:'base:canali_lagunari,base:toponimi_canali',opacity:1.0},
+  batimetria:{layers:'atlante2006:ProfonditaLaguna2000',opacity:0.9}
 };
 function toggleWMS(key){
   if(!mapInstance)return;
