@@ -643,7 +643,7 @@ var wmsLayers={canali:null,batimetria:null,tegnue:null};
 var wmsActive={canali:false,batimetria:false,tegnue:false};
 var WMS_URL='https://cigno.atlantedellalaguna.it/geoserver/wms';
 var wmsConfig={
-  canali:{layers:'atlante2006:CanaliUso',opacity:0.7},
+  canali:{layers:'atlante2006:CanaliUso,base:toponimi_canali',opacity:0.7},
   batimetria:{layers:'atlante2006:ProfonditaLaguna2000',opacity:0.6},
   tegnue:{layers:'tegnue:tegnue_localizzazione',opacity:0.85}
 };
