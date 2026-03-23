@@ -658,10 +658,7 @@ function toggleWMS(key){
       format:'image/png',
       transparent:true,
       opacity:wmsConfig[key].opacity,
-      attribution:'© Atlante della Laguna - Comune di Venezia / CNR-ISMAR',
-      tileSize:512,
-      width:512,
-      height:512
+      attribution:'© Atlante della Laguna - Comune di Venezia / CNR-ISMAR'
     }).addTo(mapInstance);
     wmsActive[key]=true;
     tog.style.background='var(--blu2)';tog.style.color='#fff';tog.style.borderColor='var(--blu2)';
