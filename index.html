@@ -643,7 +643,7 @@ var wmsActive={canali:false,batimetria:false};
 var WMS_URL='https://cigno.atlantedellalaguna.it/geoserver/wms';
 var wmsConfig={
   canali:{layers:'base:canali_lagunari,base:toponimi_canali',opacity:1.0},
-  batimetria:{layers:'atlante2006:ProfonditaLaguna2000',opacity:0.9}
+  batimetria:{layers:'atlante2006:ProfonditaLaguna2000,geonode:punti_quotati_laguna_mav_1999_2011',opacity:0.9}
 };
 function toggleWMS(key){
   if(!mapInstance)return;
