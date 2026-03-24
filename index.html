@@ -205,7 +205,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     <div>
       <div class="header-title">🎣 Fishing Diary</div>
       <div style="font-size:16px;font-weight:600;color:#fff;opacity:.9;margin-top:4px;text-shadow:0 1px 3px rgba(0,0,0,.4);padding-left:1.6em">Laguna di Venezia</div>
-      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 2.9 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
+      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.0 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
       <div class="header-info" style="margin-top:8px">I dati vengono salvati nel browser. <b>Esporta</b> regolarmente in JSON/CSV per non perderli.</div>
     </div>
     <div class="header-pescatore">
@@ -987,6 +987,63 @@ function eliminaUscita(id){if(!confirm('Eliminare questa uscita?'))return;uscite
 function fmtData(d){if(!d)return '';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
 
 var overlayLat=null,overlayLon=null;
+
+// Recentra la mappa dopo chiusura tastiera iOS.
+// Usa visualViewport se disponibile: aspetta che l'altezza torni stabile
+// (segno che la tastiera si è chiusa), poi resetta scroll e mappa.
+function ricentraMappa(centro, zoom){
+  document.activeElement.blur();
+  if(window.visualViewport){
+    var stabilityTimer=null;
+    var initialHeight=window.visualViewport.height;
+    function onViewportResize(){
+      clearTimeout(stabilityTimer);
+      stabilityTimer=setTimeout(function(){
+        window.visualViewport.removeEventListener('resize',onViewportResize);
+        window.scrollTo(0,0);
+        mapInstance.invalidateSize({pan:false});
+        mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
+        // secondo pass per sicurezza
+        setTimeout(function(){
+          window.scrollTo(0,0);
+          mapInstance.invalidateSize({pan:false});
+          mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
+        },200);
+      },150);
+    }
+    // Se la tastiera era aperta il viewport è già ridotto: aspetta resize
+    // Se già a dimensione piena, esegui subito
+    if(window.visualViewport.height < initialHeight*0.9 || window.visualViewport.height < window.innerHeight*0.8){
+      window.visualViewport.addEventListener('resize',onViewportResize);
+      // fallback: se dopo 1.5s nessun resize, esegui comunque
+      setTimeout(function(){
+        window.visualViewport.removeEventListener('resize',onViewportResize);
+        window.scrollTo(0,0);
+        mapInstance.invalidateSize({pan:false});
+        mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
+      },1500);
+    } else {
+      setTimeout(function(){
+        window.scrollTo(0,0);
+        mapInstance.invalidateSize({pan:false});
+        mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
+      },100);
+    }
+  } else {
+    // Fallback per browser senza visualViewport
+    setTimeout(function(){
+      window.scrollTo(0,0);
+      mapInstance.invalidateSize({pan:false});
+      mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
+      setTimeout(function(){
+        window.scrollTo(0,0);
+        mapInstance.invalidateSize({pan:false});
+        mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
+      },400);
+    },300);
+  }
+}
+
 function initMap(){
   if(mapInstance){mapInstance.invalidateSize();renderSpotMappa();return;}
   mapInstance=L.map('map').setView([45.4408,12.3155],12);
@@ -1023,16 +1080,7 @@ function salvaSpotOverlay(){
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
   renderSpotMappa();
   populateSpotDropdown();
-  // Fix iOS Safari: recentra la mappa dopo chiusura overlay (la tastiera può aver spostato il viewport)
-  document.activeElement.blur();
-  setTimeout(function(){
-    mapInstance.invalidateSize({pan:false});
-    mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
-    setTimeout(function(){
-      mapInstance.invalidateSize({pan:false});
-      mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
-    },400);
-  },300);
+  ricentraMappa(centro, zoom);
 }
 function annullaSpotOverlay(){
   document.getElementById('spot-overlay').style.display='none';
@@ -1082,17 +1130,7 @@ function salvaSpotPopup(lat,lon){
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
   renderSpotMappa();
   populateSpotDropdown();
-  // Fix Safari iOS: la tastiera ridimensiona il viewport e sposta la mappa
-  // Aspettiamo che la tastiera si chiuda prima di ricentrare
-  document.activeElement.blur();
-  setTimeout(function(){
-    mapInstance.invalidateSize({pan:false});
-    mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
-    setTimeout(function(){
-      mapInstance.invalidateSize({pan:false});
-      mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
-    },400);
-  },300);
+  ricentraMappa(centro, zoom);
 }
 function annullaSpotPopup(){
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
