@@ -64,6 +64,12 @@ select{width:100%;padding:9px 30px 9px 10px;border:1px solid var(--border);borde
 .stat-num{font-size:26px;font-weight:700}
 .stat-label{font-size:11px;opacity:.75;margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
 #map{height:60vh;min-height:300px;max-height:520px;border-radius:10px;border:1px solid var(--border)}
+@media(max-width:600px){
+  body.mappa-active .app{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding:0.5rem}
+  body.mappa-active .tabs{flex-shrink:0}
+  body.mappa-active #panel-mappa{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  body.mappa-active .header{display:none!important}
+}
 .spot-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f4f8}
 .spot-item:last-child{border-bottom:none}
 .empty{color:var(--muted);font-size:14px;text-align:center;padding:2rem}
@@ -674,7 +680,8 @@ function showPanel(id,el){
   document.getElementById('panel-'+id).classList.add('active');
   el.classList.add('active');
   document.querySelector('.header').style.display = (id==='mappa') ? 'none' : '';
-  if(id==='mappa')setTimeout(initMap,100);
+  if(id==='mappa'){document.body.classList.add('mappa-active');setTimeout(initMap,100);}
+  else{document.body.classList.remove('mappa-active');}
   if(id==='nuova')populateSpotDropdown();
   if(id==='storico')renderStorico();
   if(id==='statistiche')renderStats();
@@ -1025,12 +1032,15 @@ function renderSpotMappa(){
 function salvaSpotPopup(lat,lon){
   var nome=document.getElementById('popup-nome')?document.getElementById('popup-nome').value.trim():'';
   if(!nome){alert('Inserisci il nome dello spot.');return;}
+  var centro=mapInstance.getCenter();
+  var zoom=mapInstance.getZoom();
   var data=new Date().toISOString().split('T')[0];
   spots.push({nome:nome,lat:lat,lon:lon,data:data,origine:'manuale',id:Date.now()});
   saveSpots();
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
   renderSpotMappa();
   populateSpotDropdown();
+  setTimeout(function(){mapInstance.setView(centro,zoom,{animate:false});},50);
 }
 function annullaSpotPopup(){
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
