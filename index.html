@@ -205,7 +205,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     <div>
       <div class="header-title">🎣 Fishing Diary</div>
       <div style="font-size:16px;font-weight:600;color:#fff;opacity:.9;margin-top:4px;text-shadow:0 1px 3px rgba(0,0,0,.4);padding-left:1.6em">Laguna di Venezia</div>
-      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.2-debug · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
+      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.2 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
       <div class="header-info" style="margin-top:8px">I dati vengono salvati nel browser. <b>Esporta</b> regolarmente in JSON/CSV per non perderli.</div>
     </div>
     <div class="header-pescatore">
@@ -992,25 +992,24 @@ var overlayLat=null,overlayLon=null;
 function logDebug(step){
   var mapEl=document.getElementById('map');
   var panel=document.getElementById('panel-mappa');
-  var vvh=window.visualViewport?window.visualViewport.height:'n/a';
-  var vvw=window.visualViewport?window.visualViewport.width:'n/a';
+  var vvh=window.visualViewport?Math.round(window.visualViewport.height):'n/a';
+  var vvw=window.visualViewport?Math.round(window.visualViewport.width):'n/a';
   var c=mapInstance?mapInstance.getCenter():null;
-  var box=document.getElementById('debug-box');
-  if(!box)return;
-  box.style.display='block';
-  box.innerHTML+='<b>['+step+']</b><br>'+
-    'map: '+mapEl.offsetWidth+'×'+mapEl.offsetHeight+'<br>'+
-    'panel.scrollTop: '+(panel?panel.scrollTop:'n/a')+'<br>'+
-    'window.scrollY: '+window.scrollY+'<br>'+
-    'visualViewport: '+vvw+'×'+vvh+'<br>'+
-    'leaflet center: '+(c?c.lat.toFixed(4)+','+c.lng.toFixed(4):'n/a')+'<br>'+
-    '─────────────<br>';
+  var msg=
+    '['+step+']\n'+
+    'map el: '+mapEl.offsetWidth+'x'+mapEl.offsetHeight+'\n'+
+    'panel.scrollTop: '+(panel?panel.scrollTop:'n/a')+'\n'+
+    'window.scrollY: '+Math.round(window.scrollY)+'\n'+
+    'visualViewport: '+vvw+'x'+vvh+'\n'+
+    'leaflet center: '+(c?c.lat.toFixed(4)+','+c.lng.toFixed(4):'n/a');
+  alert(msg);
 }
 
-// Recentra la mappa dopo il salvataggio di uno spot.
 function ricentraMappa(centro, zoom){
   document.activeElement.blur();
-  function eseguiRecentramento(step){
+  var altezzaIniziale=window.visualViewport?window.visualViewport.height:window.innerHeight;
+
+  function esegui(){
     var panel=document.getElementById('panel-mappa');
     if(panel) panel.scrollTop=0;
     window.scrollTo(0,0);
@@ -1018,11 +1017,34 @@ function ricentraMappa(centro, zoom){
     if(mapEl) void mapEl.offsetWidth;
     mapInstance.invalidateSize({pan:false,animate:false});
     mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
-    logDebug(step);
   }
-  setTimeout(function(){ eseguiRecentramento('T+50ms'); },50);
-  setTimeout(function(){ eseguiRecentramento('T+400ms'); },400);
-  setTimeout(function(){ eseguiRecentramento('T+900ms'); },900);
+
+  if(window.visualViewport){
+    // Aspetta che il viewport torni all'altezza normale (tastiera chiusa)
+    function onResize(){
+      var h=window.visualViewport.height;
+      // quando l'altezza supera il 90% di innerHeight, la tastiera è chiusa
+      if(h > window.innerHeight * 0.85){
+        window.visualViewport.removeEventListener('resize',onResize);
+        clearTimeout(fallback);
+        setTimeout(esegui, 100); // piccolo delay per stabilizzazione
+      }
+    }
+    // Se la tastiera è già chiusa (viewport già pieno), esegui subito
+    if(window.visualViewport.height > window.innerHeight * 0.85){
+      setTimeout(esegui, 100);
+    } else {
+      window.visualViewport.addEventListener('resize', onResize);
+      // fallback: dopo 1.5s esegui comunque
+      var fallback=setTimeout(function(){
+        window.visualViewport.removeEventListener('resize',onResize);
+        esegui();
+      }, 1500);
+    }
+  } else {
+    // Fallback per browser senza visualViewport
+    setTimeout(esegui, 600);
+  }
 }
 
 function initMap(){
