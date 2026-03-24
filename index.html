@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="referrer" content="no-referrer-when-downgrade">
@@ -33,11 +33,11 @@ body{font-family:system-ui,sans-serif;font-size:15px;background:var(--bg);color:
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 label{display:block;font-size:12px;color:var(--muted);margin-bottom:3px;margin-top:10px;font-weight:500}
 label:first-child{margin-top:0}
-input,textarea{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fafcff;color:var(--text)}
+input,textarea{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:16px;background:#fafcff;color:var(--text)}
 textarea{resize:vertical;min-height:70px}
 .sel-wrap{position:relative;display:block}
 .sel-wrap::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--muted);pointer-events:none}
-select{width:100%;padding:9px 30px 9px 10px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fafcff;color:var(--text);-webkit-appearance:none;appearance:none;cursor:pointer}
+select{width:100%;padding:9px 30px 9px 10px;border:1px solid var(--border);border-radius:8px;font-size:16px;background:#fafcff;color:var(--text);-webkit-appearance:none;appearance:none;cursor:pointer}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .btn{display:inline-block;padding:9px 18px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);cursor:pointer;font-size:14px;font-weight:500;touch-action:manipulation;user-select:none;text-align:center}
@@ -767,8 +767,24 @@ function rilevaPosizione(){
       mostraFormSalvaSpotGPS(lat,lon);
     },
     function(err){
-      var msg={'1':'Permesso GPS negato. Abilitalo nelle impostazioni del browser.','2':'Segnale GPS non disponibile.','3':'Timeout: riprova all\'aperto.'};
-      status.textContent='⚠️ '+(msg[err.code]||'Errore GPS.');
+      if(err.code===1){
+        var isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+        var isAndroid=/Android/i.test(navigator.userAgent);
+        var url=window.location.href;
+        var linkApri='';
+        if(isIOS){
+          linkApri=' <a href="'+url+'" target="_blank" style="color:var(--blu2);font-weight:600;text-decoration:underline">Apri in Safari</a>';
+        } else if(isAndroid){
+          linkApri=' <a href="'+url+'" target="_blank" style="color:var(--blu2);font-weight:600;text-decoration:underline">Apri in Chrome</a>';
+        }
+        status.innerHTML='⚠️ GPS non disponibile qui. Per usarlo, apri l'app nel browser del tuo telefono.'+linkApri;
+      } else if(err.code===2){
+        status.textContent='⚠️ Segnale GPS non disponibile. Prova all'aperto.';
+      } else if(err.code===3){
+        status.textContent='⚠️ Timeout GPS. Riprova all'aperto.';
+      } else {
+        status.textContent='⚠️ Errore GPS.';
+      }
     },
     {enableHighAccuracy:true,timeout:10000,maximumAge:0}
   );
