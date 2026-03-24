@@ -1040,10 +1040,10 @@ function salvaSpotPopup(lat,lon){
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
   renderSpotMappa();
   populateSpotDropdown();
-  mapInstance.off('moveend');
   setTimeout(function(){
+    mapInstance.invalidateSize();
     mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
-  },150);
+  },200);
 }
 function annullaSpotPopup(){
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
