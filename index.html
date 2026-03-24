@@ -10,7 +10,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--blu:#1a3a5c;--blu2:#2a5298;--azzurro:#4a90d9;--bg:#f4f7fa;--card:#fff;--border:#d0dce8;--text:#1a2a3a;--muted:#6b8099}
-body{font-family:system-ui,sans-serif;font-size:15px;background:var(--bg);color:var(--text);-webkit-text-size-adjust:100%}
+body{font-family:system-ui,sans-serif;font-size:15px;background:var(--bg);color:var(--text);-webkit-text-size-adjust:100%;overflow-x:hidden}
 .app{max-width:880px;margin:0 auto;padding:1rem}
 .header{position:relative;border-radius:16px;margin-bottom:1.25rem;color:#fff;overflow:hidden;min-height:160px}
 .header-bg{position:absolute;inset:0;width:100%;height:100%}
@@ -545,7 +545,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
         </select></div></div>
       </div>
       <div style="margin-top:10px"><label>Colore esca</label>
-        <div id="c_esca_colore_wrap" style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px">
+        <div id="c_esca_colore_wrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
           <div class="tog" onclick="togColoreCattura(this,'Bianco')">Bianco</div>
           <div class="tog" onclick="togColoreCattura(this,'Bianco perlato')">Bianco perlato</div>
           <div class="tog" onclick="togColoreCattura(this,'Naturale')">Naturale</div>
@@ -658,7 +658,10 @@ function toggleWMS(key){
       format:'image/png',
       transparent:true,
       opacity:wmsConfig[key].opacity,
-      attribution:'© Atlante della Laguna - Comune di Venezia / CNR-ISMAR'
+      attribution:'© Atlante della Laguna - Comune di Venezia / CNR-ISMAR',
+      tileSize:512,
+      width:512,
+      height:512
     }).addTo(mapInstance);
     wmsActive[key]=true;
     tog.style.background='var(--blu2)';tog.style.color='#fff';tog.style.borderColor='var(--blu2)';
