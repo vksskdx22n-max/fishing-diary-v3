@@ -205,7 +205,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     <div>
       <div class="header-title">🎣 Fishing Diary</div>
       <div style="font-size:16px;font-weight:600;color:#fff;opacity:.9;margin-top:4px;text-shadow:0 1px 3px rgba(0,0,0,.4);padding-left:1.6em">Laguna di Venezia</div>
-      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.1 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
+      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.2-debug · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
       <div class="header-info" style="margin-top:8px">I dati vengono salvati nel browser. <b>Esporta</b> regolarmente in JSON/CSV per non perderli.</div>
     </div>
     <div class="header-pescatore">
@@ -643,6 +643,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     </div>
   </div>
   <div class="card" style="padding:0"><div id="map"></div></div>
+  <div id="debug-box" style="display:none;background:#1a1a1a;color:#00ff88;font-family:monospace;font-size:11px;padding:10px;border-radius:8px;margin-bottom:8px;line-height:1.8"></div>
   <div class="card">
     <div class="section-title">I tuoi spot salvati</div>
     <div id="spot-list-mappa"><div class="empty">Apri la mappa per vedere gli spot.</div></div>
@@ -988,30 +989,40 @@ function fmtData(d){if(!d)return '';var p=d.split('-');return p[2]+'/'+p[1]+'/'+
 
 var overlayLat=null,overlayLon=null;
 
+function logDebug(step){
+  var mapEl=document.getElementById('map');
+  var panel=document.getElementById('panel-mappa');
+  var vvh=window.visualViewport?window.visualViewport.height:'n/a';
+  var vvw=window.visualViewport?window.visualViewport.width:'n/a';
+  var c=mapInstance?mapInstance.getCenter():null;
+  var box=document.getElementById('debug-box');
+  if(!box)return;
+  box.style.display='block';
+  box.innerHTML+='<b>['+step+']</b><br>'+
+    'map: '+mapEl.offsetWidth+'×'+mapEl.offsetHeight+'<br>'+
+    'panel.scrollTop: '+(panel?panel.scrollTop:'n/a')+'<br>'+
+    'window.scrollY: '+window.scrollY+'<br>'+
+    'visualViewport: '+vvw+'×'+vvh+'<br>'+
+    'leaflet center: '+(c?c.lat.toFixed(4)+','+c.lng.toFixed(4):'n/a')+'<br>'+
+    '─────────────<br>';
+}
+
 // Recentra la mappa dopo il salvataggio di uno spot.
-// Il problema su iOS: l'overlay chiude, il panel scrolla, Leaflet perde
-// il riferimento alle dimensioni e renderizza la mappa offset.
-// Fix: scroll del panel a zero + reflow forzato + invalidateSize + setView.
 function ricentraMappa(centro, zoom){
   document.activeElement.blur();
-  function eseguiRecentramento(){
-    // 1. Scrolla il panel mappa a zero (non window — il panel ha overflow-y:auto)
+  function eseguiRecentramento(step){
     var panel=document.getElementById('panel-mappa');
     if(panel) panel.scrollTop=0;
     window.scrollTo(0,0);
-    // 2. Forza reflow leggendo offsetWidth (obbliga il browser a ricalcolare il layout)
     var mapEl=document.getElementById('map');
     if(mapEl) void mapEl.offsetWidth;
-    // 3. invalidateSize e setView
     mapInstance.invalidateSize({pan:false,animate:false});
     mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
+    logDebug(step);
   }
-  // Prima esecuzione: aspetta che l'overlay sia sparito dal DOM
-  setTimeout(function(){
-    eseguiRecentramento();
-    // Secondo pass: copre il caso in cui la tastiera iOS si chiude in ritardo
-    setTimeout(eseguiRecentramento, 350);
-  }, 50);
+  setTimeout(function(){ eseguiRecentramento('T+50ms'); },50);
+  setTimeout(function(){ eseguiRecentramento('T+400ms'); },400);
+  setTimeout(function(){ eseguiRecentramento('T+900ms'); },900);
 }
 
 function initMap(){
