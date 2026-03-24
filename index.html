@@ -618,6 +618,19 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
   <div id="storico-lista"></div>
 </div>
 
+<!-- OVERLAY NOME SPOT (fuori dalla mappa, evita bug Safari iOS con tastiera) -->
+<div id="spot-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);display:none;align-items:flex-end;justify-content:center;padding-bottom:40px">
+  <div style="background:#fff;border-radius:16px;padding:20px;width:90%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,0.3)">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:8px">📍 Nuovo spot</div>
+    <div id="spot-overlay-coords" style="font-size:12px;color:var(--muted);margin-bottom:12px"></div>
+    <input id="spot-overlay-nome" type="text" placeholder="Nome dello spot..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:15px;margin-bottom:12px"/>
+    <div style="display:flex;gap:8px">
+      <div onclick="salvaSpotOverlay()" style="flex:1;padding:10px;background:#2a5298;color:#fff;border-radius:8px;font-size:14px;text-align:center;cursor:pointer;font-weight:500">✓ Salva</div>
+      <div onclick="annullaSpotOverlay()" style="flex:1;padding:10px;background:#f5f5f5;color:#333;border-radius:8px;font-size:14px;text-align:center;cursor:pointer">✕ Annulla</div>
+    </div>
+  </div>
+</div>
+
 <!-- MAPPA -->
 <div id="panel-mappa" class="panel">
   <div class="card" style="padding:10px 12px 8px">
@@ -971,6 +984,7 @@ function toggleDetUscita(id,ev){
 function eliminaUscita(id){if(!confirm('Eliminare questa uscita?'))return;uscite=uscite.filter(function(u){return u.id!==id;});saveUscite();renderStorico();}
 function fmtData(d){if(!d)return '';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
 
+var overlayLat=null,overlayLon=null;
 function initMap(){
   if(mapInstance){mapInstance.invalidateSize();renderSpotMappa();return;}
   mapInstance=L.map('map').setView([45.4408,12.3155],12);
@@ -980,21 +994,35 @@ function initMap(){
   mapInstance.on('click',function(e){
     if(newSpotMarker)mapInstance.removeLayer(newSpotMarker);
     newSpotMarker=L.marker(e.latlng,{draggable:true}).addTo(mapInstance);
-    function aggiornaPopup(latlng){
-      var lat=latlng.lat.toFixed(5),lon=latlng.lng.toFixed(5);
-      newSpotMarker.bindPopup(
-        '<div style="min-width:200px">' +
-        '<div style="font-size:12px;color:#666;margin-bottom:6px">📍 <b>'+lat+'</b>, <b>'+lon+'</b></div>' +
-        '<input id="popup-nome" type="text" placeholder="Nome dello spot..." style="width:100%;padding:5px 8px;border:1px solid #ccc;border-radius:6px;font-size:13px;margin-bottom:8px"/>' +
-        '<div style="display:flex;gap:6px">' +
-        '<div onclick="salvaSpotPopup(\''+lat+'\',\''+lon+'\')" style="flex:1;padding:6px;background:#2a5298;color:#fff;border-radius:6px;font-size:12px;text-align:center;cursor:pointer">✓ Salva</div>' +
-        '<div onclick="annullaSpotPopup()" style="flex:1;padding:6px;background:#f5f5f5;color:#333;border-radius:6px;font-size:12px;text-align:center;cursor:pointer">✕ Annulla</div>' +
-        '</div></div>'
-      ,{closeButton:false}).openPopup();
-    }
-    aggiornaPopup(e.latlng);
-    newSpotMarker.on('dragend',function(ev){aggiornaPopup(ev.target.getLatLng());});
+    apriOverlaySpot(e.latlng.lat.toFixed(5),e.latlng.lng.toFixed(5));
+    newSpotMarker.on('dragend',function(ev){
+      var ll=ev.target.getLatLng();
+      apriOverlaySpot(ll.lat.toFixed(5),ll.lng.toFixed(5));
+    });
   });
+}
+function apriOverlaySpot(lat,lon){
+  overlayLat=lat;overlayLon=lon;
+  document.getElementById('spot-overlay-coords').textContent='📍 '+lat+', '+lon;
+  document.getElementById('spot-overlay-nome').value='';
+  var ov=document.getElementById('spot-overlay');
+  ov.style.display='flex';
+  setTimeout(function(){document.getElementById('spot-overlay-nome').focus();},100);
+}
+function salvaSpotOverlay(){
+  var nome=document.getElementById('spot-overlay-nome').value.trim();
+  if(!nome){alert('Inserisci il nome dello spot.');return;}
+  var data=new Date().toISOString().split('T')[0];
+  spots.push({nome:nome,lat:overlayLat,lon:overlayLon,data:data,origine:'manuale',id:Date.now()});
+  saveSpots();
+  document.getElementById('spot-overlay').style.display='none';
+  if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
+  renderSpotMappa();
+  populateSpotDropdown();
+}
+function annullaSpotOverlay(){
+  document.getElementById('spot-overlay').style.display='none';
+  if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
 }
 function makeSpotIcon(origine){
   var col=origine==='gps'?'#e07b39':'#2a5298';
@@ -1040,10 +1068,17 @@ function salvaSpotPopup(lat,lon){
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
   renderSpotMappa();
   populateSpotDropdown();
+  // Fix Safari iOS: la tastiera ridimensiona il viewport e sposta la mappa
+  // Aspettiamo che la tastiera si chiuda prima di ricentrare
+  document.activeElement.blur();
   setTimeout(function(){
-    mapInstance.invalidateSize();
+    mapInstance.invalidateSize({pan:false});
     mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
-  },200);
+    setTimeout(function(){
+      mapInstance.invalidateSize({pan:false});
+      mapInstance.setView([centro.lat,centro.lng],zoom,{animate:false});
+    },400);
+  },300);
 }
 function annullaSpotPopup(){
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
