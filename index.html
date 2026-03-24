@@ -205,7 +205,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     <div>
       <div class="header-title">🎣 Fishing Diary</div>
       <div style="font-size:16px;font-weight:600;color:#fff;opacity:.9;margin-top:4px;text-shadow:0 1px 3px rgba(0,0,0,.4);padding-left:1.6em">Laguna di Venezia</div>
-      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.4 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
+      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.5 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
       <div class="header-info" style="margin-top:8px">I dati vengono salvati nel browser. <b>Esporta</b> regolarmente in JSON/CSV per non perderli.</div>
     </div>
     <div class="header-pescatore">
@@ -1075,9 +1075,11 @@ function apriOverlaySpot(lat,lon){
   if(newSpotMarker){mapInstance.removeLayer(newSpotMarker);newSpotMarker=null;}
   renderSpotMappa();
   populateSpotDropdown();
-  var panel=document.getElementById('panel-mappa');
-  if(panel) panel.scrollTop=0;
-  window.scrollTo(0,0);
+  setTimeout(function(){
+    var panel=document.getElementById('panel-mappa');
+    if(panel) panel.scrollTop=0;
+    window.scrollTo(0,0);
+  },50);
 }
 function makeSpotIcon(origine){
   var col=origine==='gps'?'#e07b39':'#2a5298';
