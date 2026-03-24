@@ -778,11 +778,11 @@ function mostraFormSalvaSpotGPS(lat,lon){
   var data=document.getElementById('data').value||new Date().toISOString().split('T')[0];
   var form=document.createElement('div');
   form.id='gps-save-spot-form';
-  form.style.cssText='margin-top:10px;padding:10px 12px;background:#f0f6ff;border:1px solid #c8ddf5;border-radius:10px;font-size:13px';
+  form.style.cssText='margin-top:10px;padding:10px 12px;background:#f0f6ff;border:1px solid #c8ddf5;border-radius:10px;font-size:13px;width:100%;box-sizing:border-box;overflow:hidden';
   form.innerHTML=
     '<div style="font-size:11px;font-weight:600;color:var(--azzurro);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">📍 Dai un nome a questo spot?</div>'+
-    '<div style="display:flex;gap:8px;align-items:center">'+
-    '<input id="gps-spot-nome" type="text" placeholder="Nome dello spot (opzionale)..." style="flex:1;padding:7px 9px;border:1px solid var(--border);border-radius:7px;font-size:13px;background:#fff"/>'+
+    '<div style="display:flex;gap:8px;align-items:center;min-width:0;width:100%;box-sizing:border-box">'+
+    '<input id="gps-spot-nome" type="text" placeholder="Nome dello spot (opzionale)..." style="flex:1;min-width:0;width:0;padding:7px 9px;border:1px solid var(--border);border-radius:7px;font-size:13px;background:#fff;box-sizing:border-box"/>'+
     '<div class="btn btn-sm" onclick="document.getElementById(\'gps-save-spot-form\').remove()">✕</div>'+
     '</div>'+
     '<div style="font-size:11px;color:var(--muted);margin-top:5px;word-break:break-all">📅 '+fmtData(data)+' · '+lat+', '+lon+' — verrà salvato con la cattura</div>';
