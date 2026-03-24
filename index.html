@@ -69,7 +69,8 @@ select{width:100%;padding:9px 30px 9px 10px;border:1px solid var(--border);borde
 @media(max-width:600px){
   body.mappa-active .app{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding:0.5rem}
   body.mappa-active .tabs{flex-shrink:0}
-  body.mappa-active #panel-mappa{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  body.mappa-active #panel-mappa{flex-shrink:0}
+  body.mappa-active #spot-list-container{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
   body.mappa-active .header{display:none!important}
 }
 .spot-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f4f8}
@@ -205,7 +206,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     <div>
       <div class="header-title">🎣 Fishing Diary</div>
       <div style="font-size:16px;font-weight:600;color:#fff;opacity:.9;margin-top:4px;text-shadow:0 1px 3px rgba(0,0,0,.4);padding-left:1.6em">Laguna di Venezia</div>
-      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.5 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
+      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.6 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
       <div class="header-info" style="margin-top:8px">I dati vengono salvati nel browser. <b>Esporta</b> regolarmente in JSON/CSV per non perderli.</div>
     </div>
     <div class="header-pescatore">
@@ -643,12 +644,13 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     </div>
   </div>
   <div class="card" style="padding:0"><div id="map"></div></div>
-  <div id="debug-box" style="display:none;background:#1a1a1a;color:#00ff88;font-family:monospace;font-size:11px;padding:10px;border-radius:8px;margin-bottom:8px;line-height:1.8"></div>
-  <div class="card">
-    <div class="section-title">I tuoi spot salvati</div>
-    <div id="spot-list-mappa"><div class="empty">Apri la mappa per vedere gli spot.</div></div>
-    <div style="margin-top:10px;font-size:13px;color:var(--muted)">Clicca sulla mappa per aggiungere un nuovo spot.</div>
-  </div>
+</div>
+
+<!-- Lista spot: fuori dal panel-mappa, non causa scroll della mappa -->
+<div id="spot-list-container" class="card" style="display:none">
+  <div class="section-title">I tuoi spot salvati</div>
+  <div id="spot-list-mappa"><div class="empty">Apri la mappa per vedere gli spot.</div></div>
+  <div style="margin-top:10px;font-size:13px;color:var(--muted)">Clicca sulla mappa per aggiungere un nuovo spot.</div>
 </div>
 
 <!-- STATISTICHE -->
@@ -696,8 +698,14 @@ function showPanel(id,el){
   document.getElementById('panel-'+id).classList.add('active');
   el.classList.add('active');
   document.querySelector('.header').style.display = (id==='mappa') ? 'none' : '';
-  if(id==='mappa'){document.body.classList.add('mappa-active');setTimeout(initMap,100);}
-  else{document.body.classList.remove('mappa-active');}
+  if(id==='mappa'){
+    document.body.classList.add('mappa-active');
+    document.getElementById('spot-list-container').style.display='block';
+    setTimeout(initMap,100);
+  } else {
+    document.body.classList.remove('mappa-active');
+    document.getElementById('spot-list-container').style.display='none';
+  }
   if(id==='nuova')populateSpotDropdown();
   if(id==='storico')renderStorico();
   if(id==='statistiche')renderStats();
