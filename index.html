@@ -27,7 +27,7 @@ body{font-family:system-ui,sans-serif;font-size:15px;background:var(--bg);color:
 .tabs{display:flex;gap:4px;margin-bottom:1.25rem;background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:5px}
 .tab{flex:1;padding:9px 4px;font-size:13px;font-weight:500;color:var(--muted);border-radius:8px;text-align:center;cursor:pointer;touch-action:manipulation;user-select:none}
 .tab.active{background:var(--blu);color:#fff}
-.panel{display:none}.panel.active{display:block}
+.panel{display:none;overflow-x:hidden}.panel.active{display:block}
 .card{background:var(--card);border:0.5px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(26,58,92,.06)}
 .section-title{font-size:11px;font-weight:600;color:var(--azzurro);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -53,10 +53,10 @@ select{width:100%;padding:9px 30px 9px 10px;border:1px solid var(--border);borde
 .badge-cr{background:#e8f5ee;color:#2d7a4a}
 .badge-casa{background:#fff3e8;color:#e07b39}
 .badge-specie{background:#f0f4ff;color:#4a5ab8}
-.catch-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #f0f4f8}
+.catch-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #f0f4f8;min-width:0}
 .catch-row:last-child{border-bottom:none}
 .catture-form{background:#f8fafd;border:1px dashed var(--border);border-radius:10px;padding:1rem;margin-top:1rem}
-.uscita-card{background:var(--card);border:0.5px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:.75rem;border-left:4px solid var(--azzurro)}
+.uscita-card{background:var(--card);border:0.5px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:.75rem;border-left:4px solid var(--azzurro);overflow:hidden;max-width:100%;box-sizing:border-box}
 .uscita-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .uscita-date{font-weight:600;font-size:15px;color:var(--blu)}
 .uscita-spot{font-size:13px;color:var(--muted);margin-top:2px}
@@ -206,7 +206,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     <div>
       <div class="header-title">🎣 Fishing Diary</div>
       <div style="font-size:16px;font-weight:600;color:#fff;opacity:.9;margin-top:4px;text-shadow:0 1px 3px rgba(0,0,0,.4);padding-left:1.6em">Laguna di Venezia</div>
-      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 4.2 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
+      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 4.3 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
       <div class="header-info" style="margin-top:8px">I dati vengono salvati nel browser. <b>Esporta</b> regolarmente in JSON/CSV per non perderli.</div>
     </div>
     <div class="header-pescatore">
@@ -942,13 +942,13 @@ function renderStorico(){
       // meteo
       (meteoRighe.length?
         '<div style="font-size:11px;font-weight:600;color:var(--azzurro);text-transform:uppercase;margin-bottom:6px">Meteo &amp; Marea</div>'+
-        '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">'+
+        '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-width:0">'+
         meteoRighe.map(function(r){return '<span class="badge">'+r+'</span>';}).join('')+
         '</div>':'')+
       // tecnica ed esca
       (u.tecnica||u.esca?
         '<div style="font-size:11px;font-weight:600;color:var(--azzurro);text-transform:uppercase;margin-bottom:6px">Tecnica &amp; Esca</div>'+
-        '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">'+
+        '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-width:0">'+
         [u.tecnica].filter(Boolean).map(function(r){return '<span class="badge">'+r+'</span>';}).join('')+
         '</div>':'')+
       // catture
