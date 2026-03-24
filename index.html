@@ -65,13 +65,13 @@ select{width:100%;padding:9px 30px 9px 10px;border:1px solid var(--border);borde
 .stat-card{background:linear-gradient(135deg,var(--blu) 0%,var(--blu2) 100%);border-radius:12px;padding:1rem;text-align:center;color:#fff}
 .stat-num{font-size:26px;font-weight:700}
 .stat-label{font-size:11px;opacity:.75;margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
-#map{height:260px;border-radius:10px;border:1px solid var(--border)}
+#map{height:350px;border-radius:10px;border:1px solid var(--border)}
 @media(max-width:600px){
   body.mappa-active .app{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding:0.5rem}
   body.mappa-active .tabs{flex-shrink:0}
   body.mappa-active #panel-mappa{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
   body.mappa-active .header{display:none!important}
-  #map{height:260px}
+  #map{height:350px}
 }
 .spot-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f4f8}
 .spot-item:last-child{border-bottom:none}
@@ -206,7 +206,7 @@ if(localStorage.getItem('fd_pwd_ok')==='1'){
     <div>
       <div class="header-title">🎣 Fishing Diary</div>
       <div style="font-size:16px;font-weight:600;color:#fff;opacity:.9;margin-top:4px;text-shadow:0 1px 3px rgba(0,0,0,.4);padding-left:1.6em">Laguna di Venezia</div>
-      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.8 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
+      <div style="font-size:12px;color:#fff;opacity:.85;margin-top:4px;padding-left:1.6em;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.4)">vers. 3.9 · <a href="https://docs.google.com/forms/d/e/1FAIpQLSdixNuJt0e-KEVQgPTVMowOy4RxPMTRqrkozU_R-AoeFHy4zA/viewform?usp=header" target="_blank" style="color:#fff;opacity:.9;text-decoration:underline">✉️ Segnala un problema</a></div>
       <div class="header-info" style="margin-top:8px">I dati vengono salvati nel browser. <b>Esporta</b> regolarmente in JSON/CSV per non perderli.</div>
     </div>
     <div class="header-pescatore">
